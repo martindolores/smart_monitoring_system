@@ -29,13 +29,13 @@ function Dashboard() {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      "https://api.particle.io/v1/devices/events?access_token=0796096240632ac381c0ff9462594a1951a0d25c"
+      "https://api.particle.io/v1/devices/events?access_token={PARTICLE_API_TOKEN}"
     );
 
     const fetchDeviceInfo = async () => {
       try {
         const response = await fetch(
-          "https://api.particle.io/v1/devices/e00fce689d45860e19261d67?access_token=0796096240632ac381c0ff9462594a1951a0d25c"
+          "https://api.particle.io/v1/devices/e00fce689d45860e19261d67?access_token={PARTICLE_API_TOKEN}"
         );
         const data = await response.json();
         setDeviceInfo(data);
@@ -79,7 +79,7 @@ function Dashboard() {
           {tempData && tempView ? (
             <p>
               Value: {tempData.data} | Last Published: {tempData.published_at}
-              <CustomChart ref={tempChartRef} channelId="2154381" apiKey="3YY7HM2MSLKY81Z5" />
+              <CustomChart ref={tempChartRef} channelId="{CHANNEL_ID_THINKSPEAK}" apiKey="{THINKSPEAK_API}" />
             </p>
           ) : (
             <div>Disabled</div>
@@ -92,7 +92,7 @@ function Dashboard() {
           {lightData && lightView ? (
             <p>
               Value: {lightData.data} | Last Published: {lightData.published_at}
-              <CustomChart ref={lightChartRef} channelId="2154784" apiKey="ZV2BLURW5LHJXG8L" />
+              <CustomChart ref={lightChartRef} channelId="{CHANNEL_ID_THINKSPEAK}" apiKey="{THINKSPEAK_API}" />
             </p>
           ) : (
             <div>Disabled</div>
@@ -105,7 +105,7 @@ function Dashboard() {
           {soilData && soilView ? (
             <p>
               Value: {soilData.data} | Last Published: {soilData.published_at}
-              <CustomChart ref={soilChartRef} channelId="2154785" apiKey="VZ95TOSMWEJGII5E" />
+              <CustomChart ref={soilChartRef} channelId="{CHANNEL_ID_THINKSPEAK}" apiKey="{THINKSPEAK_API}" />
             </p>
           ) : (
             <div>Disabled</div>
