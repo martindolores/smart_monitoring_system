@@ -68,7 +68,7 @@ function Dashboard() {
 
   return (
     <div>
-      <h1 className="title">Smart Watering System Dashboard</h1>
+      <h1 className="title">Smart Monitoring System Dashboard</h1>
       {deviceInfo && <div className="title">Name: {deviceInfo.name}</div>}
       <div className="container">
         <div className="label">
