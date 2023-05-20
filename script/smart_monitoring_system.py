@@ -18,16 +18,16 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(SOIL_MOISTURE_SENSOR, GPIO.OUT)
 
 #Email Setup
-sender_email = 'martindolores65@gmail.com'
-receiver_email = 'martindolores65@gmail.com'
+sender_email = 'SENDER_EMAIL'
+receiver_email = 'RECEIVER_EMAIL'
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
 smtp_username = sender_email
-smtp_password = 'gueaqloxiudpgcyg'
+smtp_password = 'GMAIL_PASS'
 
 #Particle Argon
-access_token = "0796096240632ac381c0ff9462594a1951a0d25c"
-device_id = "e00fce689d45860e19261d67"
+access_token = "PARTICLE_ACCESS_TOKEN"
+device_id = "PARTICLE_DEVICE_ID"
 headers = {
     "Authorization": f"Bearer {access_token}", 
     "Content-Type": "application/x-www-form-urlencoded"    
