@@ -3,17 +3,51 @@ import CustomChart from "./CustomChart";
 import "./Dashboard.css";
 import "./App.css";
 
+const plantData = [
+  {
+    id: 1,
+    name: "plant 1",
+    channelId: "2161406",
+    apiKey: "TCEJ8CWV1CTSBUPI"
+  },
+  {
+    id: 2,
+    name: "plant 2",
+    channelId: "2154785",
+    apiKey: "VZ95TOSMWEJGII5E"
+  },
+  {
+    id: 3,
+    name: "plant 3",
+    channelId: "2154784",
+    apiKey: "ZV2BLURW5LHJXG8L"
+  }
+];
+
 function Dashboard() {
-  const [tempData, setTempData] = useState(null);
-  const [lightData, setLightData] = useState(null);
-  const [soilData, setSoilData] = useState(null);
+  const [tempData, setTempData] = useState([]);
+  const [lightData, setLightData] = useState([]);
+  const [soilData, setSoilData] = useState([]);
   const [tempView, setTempView] = useState(false);
   const [lightView, setLightView] = useState(false);
   const [soilView, setSoilView] = useState(false);
-  const [deviceInfo, setDeviceInfo] = useState(null);
+  const [selectedPlant, setSelectedPlant] = useState("plant 1");
+  const [plant, setPlant] = useState(plantData.find((p) => p.name === selectedPlant))
   const tempChartRef = useRef(null);
   const lightChartRef = useRef(null);
   const soilChartRef = useRef(null);
+
+  const handleChange = (event) => {
+    setSelectedPlant(event.target.value);
+  }
+
+  useEffect(() => {
+    setPlant(plantData.find((p) => p.name === selectedPlant)); 
+    setTempData([]);
+    setLightData([]);
+    setSoilData([]);
+    console.log(selectedPlant);
+  }, [selectedPlant]);
 
   const callParticleTempFunction = () => {
     setTempView((prevState) => !prevState);
@@ -28,49 +62,42 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    const eventSource = new EventSource(
-      "https://api.particle.io/v1/devices/events?access_token={PARTICLE_API_TOKEN}"
-    );
-
-    const fetchDeviceInfo = async () => {
+    const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://api.particle.io/v1/devices/e00fce689d45860e19261d67?access_token={PARTICLE_API_TOKEN}"
+          `https://api.thingspeak.com/channels/${plant.channelId}/feeds.json?api_key=${plant.apiKey}&results=1`
         );
-        const data = await response.json();
-        setDeviceInfo(data);
+        const json = await response.json();
+        console.log(json);
+        setTempData([json.feeds[0].field1, json.feeds[0].created_at]);
+        setLightData([json.feeds[0].field2, json.feeds[0].created_at]);
+        setSoilData([json.feeds[0].field3, json.feeds[0].created_at]);
       } catch (error) {
-        console.error("Error fetching device information:", error);
+        console.error('Error fetching data:', error);
       }
     };
-
-    eventSource.addEventListener("temp", (event) => {
-      const data = JSON.parse(event.data);
-      setTempData(data);
-    });
-
-    eventSource.addEventListener("light", (event) => {
-      const data = JSON.parse(event.data);
-      setLightData(data);
-    });
-
-    eventSource.addEventListener("soil", (event) => {
-      const data = JSON.parse(event.data);
-      setSoilData(data);
-    });
-
-    fetchDeviceInfo();
+    const interval = setInterval(fetchData, 5000); // Fetch data every 5 seconds
 
     return () => {
-      eventSource.close();
+      clearInterval(interval); // Clean up the interval on component unmount
     };
-  }, []);
+  }, [plant]);
 
   return (
     <div>
       <h1 className="title">Smart Monitoring System Dashboard</h1>
-      {deviceInfo && <div className="title">Name: {deviceInfo.name}</div>}
+      
       <div className="container">
+      <select 
+        value={selectedPlant}
+        onChange={handleChange}
+        >
+          {plantData.map((plant) => (
+            <option key={plant.id} value={plant.name}>
+              {plant.name.toUpperCase()}
+          </option>
+          ))}
+        </select>
         <div className="label">
           Temperature:{" "}
           <button onClick={callParticleTempFunction}>Toggle</button>
@@ -78,8 +105,8 @@ function Dashboard() {
         <div className="column">
           {tempData && tempView ? (
             <p>
-              Value: {tempData.data} | Last Published: {tempData.published_at}
-              <CustomChart ref={tempChartRef} channelId="{CHANNEL_ID_THINKSPEAK}" apiKey="{THINKSPEAK_API}" />
+              Value: {tempData[0]} | Last Published: {tempData[1]}
+              <CustomChart ref={tempChartRef} channelId={plant.channelId} apiKey={plant.apiKey} field="1" />
             </p>
           ) : (
             <div>Disabled</div>
@@ -89,10 +116,10 @@ function Dashboard() {
           Light Lux: <button onClick={callParticleLightFunction}>Toggle</button>
         </div>
         <div className="column">
-          {lightData && lightView ? (
+          {lightView ? (
             <p>
-              Value: {lightData.data} | Last Published: {lightData.published_at}
-              <CustomChart ref={lightChartRef} channelId="{CHANNEL_ID_THINKSPEAK}" apiKey="{THINKSPEAK_API}" />
+              Value: {lightData[0]} | Last Published: {lightData[1]}
+              <CustomChart ref={lightChartRef} channelId={plant.channelId} apiKey={plant.apiKey} field="2" />
             </p>
           ) : (
             <div>Disabled</div>
@@ -104,8 +131,8 @@ function Dashboard() {
         <div className="column">
           {soilData && soilView ? (
             <p>
-              Value: {soilData.data} | Last Published: {soilData.published_at}
-              <CustomChart ref={soilChartRef} channelId="{CHANNEL_ID_THINKSPEAK}" apiKey="{THINKSPEAK_API}" />
+              Value: {soilData[0]} | Last Published: {soilData[1]}
+              <CustomChart ref={soilChartRef} channelId={plant.channelId} apiKey={plant.apiKey} field="3" />
             </p>
           ) : (
             <div>Disabled</div>

@@ -9,7 +9,7 @@ const CustomChart = (props) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://api.thingspeak.com/channels/${props.channelId}/fields/1.json?api_key=${props.apiKey}&results=1`
+          `https://api.thingspeak.com/channels/${props.channelId}/fields/${props.field}.json?api_key=${props.apiKey}&results=1`
         );
         const json = await response.json();
         setData((prevData) => [...prevData, ...json.feeds]);
@@ -22,15 +22,16 @@ const CustomChart = (props) => {
 
     return () => {
       clearInterval(interval); // Clean up the interval on component unmount
+      setData([]);
     };
-  }, []);
+  }, [props.apiKey, props.channelId, props.field]);
 
   const chartData = {
     labels: data.map((feed) => feed.entry_id.toString()),
     datasets: [
       {
         label: 'Data',
-        data: data.map((feed) => feed.field1),
+        data: data.map((feed) => feed[`field${props.field}`]), //need to change field here
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
       },
