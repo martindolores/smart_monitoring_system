@@ -7,20 +7,20 @@ const plantData = [
   {
     id: 1,
     name: "plant 1",
-    channelId: "2161406",
-    apiKey: "TCEJ8CWV1CTSBUPI"
+    channelId: "{THINGSPEAK_CHANNELID_ONE}",
+    apiKey: "{THINGSPEAK_API_KEY_ONE}"
   },
   {
     id: 2,
     name: "plant 2",
-    channelId: "2154785",
-    apiKey: "VZ95TOSMWEJGII5E"
+    channelId: "{THINGSPEAK_CHANNELID_TWO}",
+    apiKey: "{THINGSPEAK_API_KEY_TWO}"
   },
   {
     id: 3,
     name: "plant 3",
-    channelId: "2154784",
-    apiKey: "ZV2BLURW5LHJXG8L"
+    channelId: "{THINGSPEAK_CHANNELID_THREE}",
+    apiKey: "{THINGSPEAK_API_KEY_THREE}"
   }
 ];
 
